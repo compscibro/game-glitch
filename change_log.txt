@@ -1,0 +1,75 @@
+Date: 2026-03-14
+Files Changed: app.py
+Summary: Fixed off-by-one bug where attempts counter initialized to 1 instead of 0, causing the game to show 1 attempt used before any guess was submitted and mismatching attempt counts between the sidebar and center display.
+
+Date: 2026-03-14
+Files Changed: app.py
+Summary: Fixed backwards hints in check_guess — "Too High" now correctly says "Go LOWER!" and "Too Low" says "Go HIGHER!". Also removed a string conversion glitch that cast the secret to a string on even-numbered attempts, which caused incorrect comparisons every other guess.
+
+Date: 2026-03-14
+Files Changed: app.py
+Summary: Fixed New Game button not resetting history, score, or game status. Added resets for session_state.history, session_state.score, and session_state.status so each new game starts cleanly.
+
+Date: 2026-03-14
+Files Changed: app.py
+Summary: Fixed score display mismatch between the win/loss message and the Developer Debug Info panel. Moved the debug expander to after the submit handler so it reads the already-updated score value instead of the previous rerun's value.
+
+Date: 2026-03-14
+Files Changed: app.py, logic_utils.py
+Summary: Refactored game logic into logic_utils.py. Removed duplicate function definitions from app.py and replaced with a single import. Updated check_guess call site to handle the new single-string return value using a local hint message map. All 3 pytest tests pass.
+
+Date: 2026-03-14
+Files Changed: app.py
+Summary: Fixed "Attempts left" showing 1 instead of 0 on the final failed attempt. Replaced st.info with an st.empty() placeholder filled after the attempt increment so the count always reflects the post-submission value.
+
+Date: 2026-03-15
+Files Changed: logic_utils.py
+Summary: Fixed two scoring bugs in update_score. Removed the off-by-one in the win formula (attempt_number + 1 → attempt_number) so a first-attempt win correctly awards 90 points. Removed the even/odd asymmetry for Too High guesses so it consistently deducts 5 points like Too Low.
+
+Date: 2026-03-15
+Files Changed: app.py
+Summary: Wrapped the text input and submit button in st.form so pressing Enter submits the guess. New Game and Show Hint moved to a separate 2-column row outside the form.
+
+Date: 2026-03-15
+Files Changed: logic_utils.py, app.py
+Summary: Updated difficulty ranges — Normal changed to 1–50, Hard changed to 1–100. Fixed New Game button to use low/high from get_range_for_difficulty so the secret respects the selected difficulty. Fixed info banner to display the actual range dynamically. Changed default difficulty from Normal to Easy.
+
+Date: 2026-03-15
+Files Changed: app.py
+Summary: Set all difficulty levels to 8 attempts so the sidebar and info banner are always in sync.
+
+Date: 2026-03-15
+Files Changed: app.py
+Summary: Added input range validation — guesses outside the difficulty range are rejected with an error message and do not count as an attempt. Moved the attempt increment to only fire after input passes both parse and range checks.
+
+Date: 2026-03-15
+Files Changed: tests/test_game_logic.py
+Summary: Expanded test suite to 43 tests. Added edge cases and rare event coverage — scientific notation, multiple decimal points, leading spaces, very large numbers, boundary wins, attempt-zero scoring, and multi-guess score accumulation. All 43 tests pass.
+
+Date: 2026-03-15
+Files Changed: app.py
+Summary: Fixed game state not resetting when difficulty is changed. Added difficulty tracking in session state — switching difficulty now triggers a full reset of secret, attempts, score, status, and history.
+
+Date: 2026-03-15
+Files Changed: logic_utils.py, tests/test_game_logic.py
+Summary: Fixed fallback in get_range_for_difficulty to return (1, 50) instead of (1, 100) so unrecognized difficulties default to Normal range rather than silently behaving like Hard. Updated two affected tests.
+
+Date: 2026-03-15
+Files Changed: logic_utils.py
+Summary: Collapsed redundant Too High and Too Low branches in update_score into a single condition since both deduct 5 points.
+
+Date: 2026-03-15
+Files Changed: app.py, logic_utils.py
+Summary: Fixed "New game started." message never appearing — the original st.success() call was discarded by the immediate st.rerun(). Replaced with a session state flag so the message persists across the rerun and displays correctly. Also narrowed exception handling in parse_guess from except Exception to except ValueError.
+
+Date: 2026-03-15
+Files Changed: app.py
+Summary: Fixed empty gap in attempts banner when game is won or lost by filling the placeholder immediately on creation instead of only inside the submit handler. Also added show_new_game_msg flag to the difficulty change reset so players are notified when switching difficulty resets the game. Removed the now-redundant else block.
+
+Date: 2026-03-15
+Files Changed: app.py
+Summary: Fixed progress bar rendering one step behind — replaced direct st.progress() call with an st.empty() placeholder filled after the submit handler so the bar reflects the post-submission attempt count. Also disabled the submit button when the game is won or lost to prevent the form from accepting additional guesses.
+
+Date: 2026-03-15
+Files Changed: tests/test_game_logic.py
+Summary: Expanded test suite from 43 to 74 tests. Added exhaustive coverage for all four functions — adjacent-value and negative-guess cases for check_guess; leading plus/minus, trailing dot, leading zeros, comma separator, mixed letters, and float scientific notation for parse_guess; empty string, None, all-caps, and lowercase variants for get_range_for_difficulty; and win at every attempt value 1–8, deduction from zero, empty-string outcome, and multi-step mixed sequences for update_score. All 74 tests pass.
